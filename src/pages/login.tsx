@@ -1,10 +1,26 @@
+import { useMutation } from "@apollo/client";
+import gql from "graphql-tag";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { FormError } from "../components/form-error";
+import {
+  LoginMutation,
+  LoginMutationVariables,
+} from "../__generated__/LoginMutation";
+
+const LOGIN_MUTATION = gql`
+  mutation LoginMutation($loginInput: LoginInput!) {
+    login(input: $loginInput) {
+      ok
+      token
+      error
+    }
+  }
+`;
 
 interface ILoginForm {
-  email?: string;
-  password?: string;
+  email: string;
+  password: string;
 }
 
 export const Login = () => {
@@ -15,8 +31,32 @@ export const Login = () => {
     formState: { errors },
   } = useForm<ILoginForm>();
 
+  const onCompleted = (data: LoginMutation) => {
+    const { ok, token } = data.login;
+    if (ok) {
+      console.log(token);
+    }
+  };
+
+  const [loginMutation, { data: loginMutationResult, loading }] = useMutation<
+    LoginMutation,
+    LoginMutationVariables
+  >(LOGIN_MUTATION, {
+    onCompleted,
+  });
+
   const onSubmit = () => {
-    console.log(getValues());
+    if (!loading) {
+      const { email, password } = getValues();
+      loginMutation({
+        variables: {
+          loginInput: {
+            email,
+            password,
+          },
+        },
+      });
+    }
   };
 
   return (
@@ -60,8 +100,11 @@ export const Login = () => {
             type="submit"
             className="bg-green-500 w-full mt-6 mb-6 py-2 rounded-md self-end font-semibold text-white text-base hover:opacity-90"
           >
-            Login
+            {loading ? "Loading..." : "Login"}
           </button>
+          {loginMutationResult?.login.error && (
+            <FormError errorMessage={loginMutationResult.login.error} />
+          )}
         </form>
       </div>
     </div>
