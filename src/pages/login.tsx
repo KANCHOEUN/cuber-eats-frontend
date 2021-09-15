@@ -2,7 +2,11 @@ import { useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { isLoggedInVar } from "../apollo";
+import { Button } from "../components/button";
 import { FormError } from "../components/form-error";
+import nuberLogo from "../images/uber-eats.svg";
 import {
   LoginMutation,
   LoginMutationVariables,
@@ -28,13 +32,16 @@ export const Login = () => {
     register,
     getValues,
     handleSubmit,
-    formState: { errors },
-  } = useForm<ILoginForm>();
+    formState: { errors, isValid },
+  } = useForm<ILoginForm>({
+    mode: "onChange",
+  });
 
   const onCompleted = (data: LoginMutation) => {
     const { ok, token } = data.login;
     if (ok) {
       console.log(token);
+      isLoggedInVar(true);
     }
   };
 
@@ -60,18 +67,25 @@ export const Login = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-800">
-      <div className="bg-white w-full max-w-md px-7 py-10 rounded-lg text-center">
-        <h3 className="font-semibold text-2xl text-gray-800 pb-1">Login</h3>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col px-5">
+    <div className="h-screen flex flex-col items-center mt-8 md:mt-24">
+      <div className="w-full max-w-screen-sm flex flex-col items-center px-4">
+        <img src={nuberLogo} alt="nuberLogo" className="w-48 mb-9 md:mb-16" />
+        <h3 className="w-full font-medium text-left text-3xl">Welcome back</h3>
+        <span className="w-full text-left mt-8 mb-1">
+          {"Sign in with your email address and password."}
+        </span>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col w-full"
+        >
           <input
             {...register("email", { required: "Email is required" })}
             type="email"
             placeholder="Email"
             className={
               errors.email?.message
-                ? "input focus:ring-red-400"
-                : "input focus:ring-green-500"
+                ? "input focus:border-red-400"
+                : "input focus:border-gray-600"
             }
           />
           {errors.email?.message && (
@@ -86,8 +100,8 @@ export const Login = () => {
             placeholder="Password"
             className={
               errors.password?.message
-                ? "input focus:ring-red-400"
-                : "input focus:ring-green-500"
+                ? "input focus:border-red-400"
+                : "input focus:border-gray-600"
             }
           />
           {errors.password?.message && (
@@ -96,16 +110,17 @@ export const Login = () => {
           {errors.password?.type === "minLength" && (
             <FormError errorMessage={"Password must be more than 10 chars"} />
           )}
-          <button
-            type="submit"
-            className="bg-green-500 w-full mt-6 mb-6 py-2 rounded-md self-end font-semibold text-white text-base hover:opacity-90"
-          >
-            {loading ? "Loading..." : "Login"}
-          </button>
+          <Button canClick={isValid} loading={loading} actionText={"Login"} />
           {loginMutationResult?.login.error && (
             <FormError errorMessage={loginMutationResult.login.error} />
           )}
         </form>
+        <div className="mt-4">
+          {"New to Nuber? "}
+          <Link to="/create-account" className="text-primary hover:underline">
+            Create an Account
+          </Link>
+        </div>
       </div>
     </div>
   );
