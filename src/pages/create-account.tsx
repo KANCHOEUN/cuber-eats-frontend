@@ -46,7 +46,7 @@ export const CreateAccount = () => {
   const onCompleted = (data: CreateAccountMutation) => {
     const { ok, error } = data.createAccount;
     if (ok) {
-      history.push("/login");
+      history.push("/");
     }
   };
 
@@ -143,7 +143,7 @@ export const CreateAccount = () => {
         </form>
         <div className="mt-4">
           {"Already use Cuber? "}
-          <Link to="/login" className="text-primary hover:underline">
+          <Link to="/" className="text-primary hover:underline">
             Log in
           </Link>
         </div>
