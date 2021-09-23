@@ -18,7 +18,7 @@ export const Header: React.FC<IHeaderProps> = ({ email }) => {
         </div>
       )}
       <header className="py-8">
-        <div className="w-full px-7 xl:px-0 max-w-screen-xl mx-auto flex justify-between items-center">
+        <div className="w-full px-7 xl:px-0 max-w-screen-2xl mx-auto flex justify-between items-center">
           <img src={cuberLogo} alt="cuberLogo" className="w-36" />
           <span>
             <Link to="/my-profile" className="text-base flex">
