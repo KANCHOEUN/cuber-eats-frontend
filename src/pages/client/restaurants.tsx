@@ -8,6 +8,7 @@ import {
 import bannerLeft from "../../images/banner-left.svg";
 import bannerRight from "../../images/banner-right.svg";
 import { LocationMarkerIcon } from "@heroicons/react/solid";
+import { Restaurant } from "../../components/restaurant";
 
 const GET_RESTAURANTS_QUERY = gql`
   query restaurantsPageQuery($input: RestaurantsInput!) {
@@ -86,24 +87,36 @@ export const Restaurants = () => {
           </div>
         </form>
       </div>
+
       {/* Category */}
-      <div className="max-w-screen-2xl mx-auto mt-8">
-        {!loading && (
+      {!loading && (
+        <div className="max-w-screen-2xl mx-auto mt-8">
           <div className="max-w-screen-lg mx-auto flex justify-around">
             {data?.getCategories.categories?.map((category) => (
-              <div className="flex flex-col">
+              <div className="flex flex-col group">
                 <div
-                  className="w-16 h-16 bg-cover rounded-full hover:bg-gray-100 cursor-pointer"
+                  className="w-16 h-16 bg-cover rounded-full group-hover:bg-gray-100 cursor-pointer"
                   style={{ backgroundImage: `url(${category.coverImg})` }}
                 ></div>
-                <span className="capitalize text-base text-center font-semibold font-uber mt-1">
+                <span className="capitalize text-base text-center font-semibold font-uber mt-1 cursor-pointer">
                   {category.name}
                 </span>
               </div>
             ))}
           </div>
-        )}
-      </div>
+          {/* TODO: Filter */}
+          <div className="grid grid-cols-3 gap-x-5 gap-y-10 mt-14">
+            {data?.getRestaurants.restaurants?.map((restaurant) => (
+              <Restaurant
+                id={restaurant.id + ""}
+                name={restaurant.name}
+                coverImg={restaurant.coverImg}
+                categoryName={restaurant.category?.name}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 };
