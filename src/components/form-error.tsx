@@ -6,7 +6,7 @@ interface IFormErrorProps {
 }
 
 export const FormError: React.FC<IFormErrorProps> = ({ errorMessage }) => (
-  <span className="self-start mt-1 font-medium text-red-400 block">
+  <span role="alert" className="self-start mt-1 font-medium text-red-400 block">
     <ExclamationCircleIcon className="h-5 w-5 inline" viewBox="0 0 20 22" />
     {" " + errorMessage}
   </span>

@@ -14,7 +14,7 @@ import {
   LoginMutationVariables,
 } from "../__generated__/LoginMutation";
 
-const LOGIN_MUTATION = gql`
+export const LOGIN_MUTATION = gql`
   mutation LoginMutation($loginInput: LoginInput!) {
     login(input: $loginInput) {
       ok
@@ -40,6 +40,7 @@ export const Login = () => {
   });
 
   const onCompleted = (data: LoginMutation) => {
+    console.log(data);
     const { ok, token } = data.login;
     if (ok && token) {
       localStorage.setItem(LOCALSTORAGE_TOKEN, token);
@@ -72,7 +73,7 @@ export const Login = () => {
   return (
     <div className="h-screen flex flex-col items-center mt-8 md:mt-24">
       <Helmet>
-        <title>Login | Cuber eats</title>
+        <title>Login | Cuber Eats</title>
       </Helmet>
       <div className="w-full max-w-screen-sm flex flex-col items-center px-4">
         <img src={cuberLogo} alt="cuberLogo" className="w-48 mb-9 md:mb-16" />

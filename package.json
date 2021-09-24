@@ -64,6 +64,7 @@
     ]
   },
   "devDependencies": {
-    "apollo": "^2.33.6"
+    "apollo": "^2.33.6",
+    "mock-apollo-client": "^1.2.0"
   }
 }
