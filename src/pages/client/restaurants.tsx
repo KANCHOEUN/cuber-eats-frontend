@@ -1,14 +1,18 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useState } from "react";
 import {
   restaurantsPageQuery,
   restaurantsPageQueryVariables,
 } from "../../__generated__/restaurantsPageQuery";
 import bannerLeft from "../../images/banner-left.svg";
 import bannerRight from "../../images/banner-right.svg";
-import { LocationMarkerIcon } from "@heroicons/react/solid";
 import { Restaurant } from "../../components/restaurant";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  LocationMarkerIcon,
+} from "@heroicons/react/solid";
 
 const GET_RESTAURANTS_QUERY = gql`
   query restaurantsPageQuery($input: RestaurantsInput!) {
@@ -42,16 +46,21 @@ const GET_RESTAURANTS_QUERY = gql`
 `;
 
 export const Restaurants = () => {
+  const [page, setPage] = useState(1);
   const { data, loading, error } = useQuery<
     restaurantsPageQuery,
     restaurantsPageQueryVariables
   >(GET_RESTAURANTS_QUERY, {
     variables: {
       input: {
-        page: 1,
+        page,
       },
     },
   });
+  console.log(data?.getRestaurants);
+
+  const onNextPageClick = () => setPage((current) => current + 1);
+  const onPreviousPageClick = () => setPage((current) => current - 1);
 
   return (
     <>
@@ -88,9 +97,9 @@ export const Restaurants = () => {
         </form>
       </div>
 
-      {/* Category */}
       {!loading && (
-        <div className="max-w-screen-2xl mx-auto mt-8">
+        <div className="max-w-screen-2xl mx-auto mt-8 pb-20">
+          {/* Category */}
           <div className="max-w-screen-lg mx-auto flex justify-around">
             {data?.getCategories.categories?.map((category) => (
               <div className="flex flex-col group">
@@ -105,6 +114,7 @@ export const Restaurants = () => {
             ))}
           </div>
           {/* TODO: Filter */}
+          {/* Restaurants */}
           <div className="grid grid-cols-3 gap-x-5 gap-y-10 mt-14">
             {data?.getRestaurants.restaurants?.map((restaurant) => (
               <Restaurant
@@ -114,6 +124,27 @@ export const Restaurants = () => {
                 categoryName={restaurant.category?.name}
               />
             ))}
+          </div>
+          <div className="grid grid-cols-3 text-center justify-items-center max-w-md mx-auto mt-10">
+            {page > 1 ? (
+              <ArrowLeftIcon
+                onClick={onPreviousPageClick}
+                className="w-6 justify-center cursor-pointer"
+              />
+            ) : (
+              <div></div>
+            )}
+            <span className="mx-5">
+              Page {page} of {data?.getRestaurants.totalPages}
+            </span>
+            {page !== data?.getRestaurants.totalPages ? (
+              <ArrowRightIcon
+                onClick={onNextPageClick}
+                className="w-6 cursor-pointer"
+              />
+            ) : (
+              <div></div>
+            )}
           </div>
         </div>
       )}
